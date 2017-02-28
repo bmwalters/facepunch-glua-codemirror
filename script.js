@@ -107,26 +107,21 @@ let replacePreWithCodeMirror = function(pre) {
     })
   })
 
-  let beginningDragPosition
-  let beginningHeight
+  let d = new Unidragger()
+  d.handles = [container.querySelector(".fpcm-resize-grabber")]
+  d.bindHandles()
 
-  container.querySelector(".fpcm-resize-grabber").addEventListener("dragstart", (e) => {
-    let emptyElement = document.createElement("span")
-    e.dataTransfer.setDragImage(emptyElement, 0, 0)
-    beginningDragPosition = e.clientY
-    beginningHeight = container.querySelector(".fpcm-output").offsetHeight
-  })
+  let initialOutputHeight
 
-  let dragTimeout
+  let outputContainer = container.querySelector(".fpcm-output")
 
-  container.querySelector(".fpcm-resize-grabber").addEventListener("drag", (e) => {
-    // only run every 50ms
-    if (dragTimeout != null) { return }
-    dragTimeout = setTimeout(() => { dragTimeout = null }, 50)
+  d.dragStart = () => {
+    initialOutputHeight = outputContainer.offsetHeight
+  }
 
-    let outputContainer = container.querySelector(".fpcm-output")
-    outputContainer.style.height = `${beginningHeight + (e.clientY - beginningDragPosition)}px`
-  })
+  d.dragMove = (e, pointer, moveVector) => {
+    outputContainer.style.height = `${initialOutputHeight + moveVector.y}px`
+  }
 
   CodeMirror(container.querySelector(".fpcm-code-box[data-box-id='repl']"), {
     value: "-- TODO"

@@ -17,6 +17,9 @@
         "bower_components/codemirror/index.js",
         "bower_components/codemirror-addon-lint/index.js",
         "bower_components/codemirror-mode-lua/index.js",
+        "bower_components/ev-emitter/ev-emitter.js",
+        "bower_components/unipointer/unipointer.js",
+        "bower_components/unidragger/unidragger.js",
         "worker_proxy_content.js",
         "script.js"
       ],
