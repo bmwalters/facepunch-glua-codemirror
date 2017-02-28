@@ -37,6 +37,7 @@ let gluaWorker = (function() {
 
 let replacePreWithCodeMirror = function(pre) {
   let container = document.createElement("div")
+  container.classList.add("fpcm-container")
   container.innerHTML = `
     <div class="fpcm-nav">
       <a data-link-id="lua" href="javascript:;" class="fpcm-nav-link active">Lua</a>
@@ -46,6 +47,9 @@ let replacePreWithCodeMirror = function(pre) {
     <div class="fpcm-output">
       <div data-box-id="lua" class="fpcm-code-box active"></div>
       <div data-box-id="repl" class="fpcm-code-box"></div>
+    </div>
+    <div class="fpcm-resize-grabber">
+      <span draggable="true">⋯</span>
     </div>
   `
 
@@ -85,7 +89,9 @@ let replacePreWithCodeMirror = function(pre) {
 
   pre.parentElement.replaceChild(container, pre)
 
-  let luaMirror = CodeMirror(container.querySelector(".fpcm-code-box[data-box-id='lua']"), {
+  let luaBox = container.querySelector(".fpcm-code-box[data-box-id='lua']")
+
+  let luaMirror = CodeMirror(luaBox, {
     value: pre.innerText
   })
 
@@ -99,6 +105,27 @@ let replacePreWithCodeMirror = function(pre) {
     .then((prettyPrinted) => {
       luaMirror.setValue(prettyPrinted)
     })
+  })
+
+  let beginningDragPosition
+  let beginningHeight
+
+  container.querySelector(".fpcm-resize-grabber").addEventListener("dragstart", (e) => {
+    let emptyElement = document.createElement("span")
+    e.dataTransfer.setDragImage(emptyElement, 0, 0)
+    beginningDragPosition = e.clientY
+    beginningHeight = container.querySelector(".fpcm-output").offsetHeight
+  })
+
+  let dragTimeout
+
+  container.querySelector(".fpcm-resize-grabber").addEventListener("drag", (e) => {
+    // only run every 50ms
+    if (dragTimeout != null) { return }
+    dragTimeout = setTimeout(() => { dragTimeout = null }, 50)
+
+    let outputContainer = container.querySelector(".fpcm-output")
+    outputContainer.style.height = `${beginningHeight + (e.clientY - beginningDragPosition)}px`
   })
 
   CodeMirror(container.querySelector(".fpcm-code-box[data-box-id='repl']"), {
