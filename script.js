@@ -48,9 +48,7 @@ let replacePreWithCodeMirror = function(pre) {
       <div data-box-id="lua" class="fpcm-code-box active"></div>
       <div data-box-id="repl" class="fpcm-code-box"></div>
     </div>
-    <div class="fpcm-resize-grabber">
-      <span draggable="true">⋯</span>
-    </div>
+    <div class="fpcm-resize-grabber">⋯</div>
   `
 
   let activeLink = container.querySelector(".fpcm-nav-link.active")
