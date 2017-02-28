@@ -142,6 +142,8 @@ let replacePreWithCodeMirror = function(pre) {
 
       window.removeEventListener("mousemove", mouseMoveHandler)
       window.removeEventListener("mouseup", mouseUpHandler)
+
+      luaMirror.refresh()
     }
 
     window.addEventListener("mousemove", mouseMoveHandler)
