@@ -111,7 +111,7 @@ let replacePreWithCodeMirror = function(pre) {
 
   let isPointerDown = false
 
-  grabber.addEventListener("mousedown", (event) => {
+  grabber.addEventListener("mousedown", (mouseDownEvent) => {
     if (isPointerDown) { return }
 
     let initialOutputHeight
@@ -122,16 +122,12 @@ let replacePreWithCodeMirror = function(pre) {
 
     let isDragging = false
 
-    let startX = event.pageX
-    let startY = event.pageY
-
-    event.preventDefault()
+    mouseDownEvent.preventDefault()
 
     let mouseMoveHandler = (e) => {
-      let movedX = e.pageX - startX
-      let movedY = e.pageY - startY
+      let movedY = e.pageY - mouseDownEvent.pageY
 
-      if (!isDragging && (Math.abs(movedX) > 3 || Math.abs(movedY) > 3)) {
+      if (!isDragging && (Math.abs(movedY) > 3)) {
         isDragging = true
         initialOutputHeight = outputContainer.offsetHeight
       }
