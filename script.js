@@ -107,21 +107,52 @@ let replacePreWithCodeMirror = function(pre) {
     })
   })
 
-  let d = new Unidragger()
-  d.handles = [container.querySelector(".fpcm-resize-grabber")]
-  d.bindHandles()
+  let grabber = container.querySelector(".fpcm-resize-grabber")
 
-  let initialOutputHeight
+  let isPointerDown = false
 
-  let outputContainer = container.querySelector(".fpcm-output")
+  grabber.addEventListener("mousedown", (event) => {
+    if (isPointerDown) { return }
 
-  d.dragStart = () => {
-    initialOutputHeight = outputContainer.offsetHeight
-  }
+    let initialOutputHeight
 
-  d.dragMove = (e, pointer, moveVector) => {
-    outputContainer.style.height = `${initialOutputHeight + moveVector.y}px`
-  }
+    let outputContainer = container.querySelector(".fpcm-output")
+
+    isPointerDown = true
+
+    let isDragging = false
+
+    let startX = event.pageX
+    let startY = event.pageY
+
+    event.preventDefault()
+
+    let mouseMoveHandler = (e) => {
+      let movedX = e.pageX - startX
+      let movedY = e.pageY - startY
+
+      if (!isDragging && (Math.abs(movedX) > 3 || Math.abs(movedY) > 3)) {
+        isDragging = true
+        initialOutputHeight = outputContainer.offsetHeight
+      }
+
+      if (isDragging) {
+        e.preventDefault()
+        outputContainer.style.height = `${initialOutputHeight + movedY}px`
+      }
+    }
+
+    let mouseUpHandler = () => {
+      isPointerDown = false
+      isDragging = false
+
+      window.removeEventListener("mousemove", mouseMoveHandler)
+      window.removeEventListener("mouseup", mouseUpHandler)
+    }
+
+    window.addEventListener("mousemove", mouseMoveHandler)
+    window.addEventListener("mouseup", mouseUpHandler)
+  })
 
   CodeMirror(container.querySelector(".fpcm-code-box[data-box-id='repl']"), {
     value: "-- TODO"
